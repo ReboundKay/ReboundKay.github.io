@@ -1,9 +1,27 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
 <html>
+
+<style type="text/css">
+*
+{
+margin:0;
+padding:0;
+}
+html,body,.demo
+{
+width:100%;
+height:100%;
+}
+.demo
+{
+background:gray;
+}
+</style>
+
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes" />
 	<meta name="format-detection" content="telephone=no">
 
 	<meta name="renderer" content="webkit">
@@ -23,15 +41,50 @@
 	<script type="text/javascript" src="ui.js" charset="UTF-8"></script>
 </head>
 <body>
-	<div style="margin:0 auto;">
+	<div class="demo">	
 	<script type="text/javascript" charset="UTF-8">
+	/*
+		function getInfo(){
+     var s = "";  
+      s += " 网页可见区域宽："+ document.body.clientWidth+"\n";   
+      s += " 网页可见区域高："+ document.body.clientHeight+"\n"; 
+      s += " 网页可见区域宽："+ document.body.offsetWidth + " (包括边线和滚动条的宽)"+"\n";    
+      s += " 网页可见区域高："+ document.body.offsetHeight + " (包括边线的宽)"+"\n";   
+      s += " 网页正文全文宽："+ document.body.scrollWidth+"\n";   
+      s += " 网页正文全文高："+ document.body.scrollHeight+"\n";   
+      s += " 网页被卷去的高(ff)："+ document.body.scrollTop+"\n";   
+      s += " 网页被卷去的高(ie)："+ document.documentElement.scrollTop+"\n";   
+      s += " 网页被卷去的左："+ document.body.scrollLeft+"\n";   
+      s += " 网页正文部分上："+ window.screenTop+"\n";   
+      s += " 网页正文部分左："+ window.screenLeft+"\n";   
+      s += " 屏幕分辨率的高："+ window.screen.height+"\n";   
+      s += " 屏幕分辨率的宽："+ window.screen.width+"\n";   
+      s += " 屏幕可用工作区高度："+ window.screen.availHeight+"\n";   
+      s += " 屏幕可用工作区宽度："+ window.screen.availWidth+"\n";   
+      s += " 你的屏幕设置是 "+ window.screen.colorDepth +" 位彩色"+"\n";   
+      s += " 你的屏幕设置 "+ window.screen.deviceXDPI +" 像素/英寸"+"\n";   
+      alert (s);
+    }
+    getInfo();
+	*/
+		var width = 720
+		var height = 950
+		var ratio = height/width
+		if ( document.body.clientWidth > document.body.clientHeight ){
+			height = document.body.clientHeight
+			width = height / ratio
+		}else{
+			width = document.body.clientWidth
+			height = width * ratio
+		}
 		var pre = "<canvas id=\"gameCanvas\" width=\"";
-		var width = 720;
+		
 		var mid = "\" height=\"";
-		var height = 950;
+		
 		var tail = "\"></canvas>";
 		var all = pre+width+mid+height+tail;
 		console.log(all);
+		
 		document.write(all+"<br>");
 		document.write(navigator.userAgent+"<br>");
 		document.write(cc.sys.dump()+"<br>");
