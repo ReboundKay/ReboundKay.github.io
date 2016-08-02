@@ -23,7 +23,6 @@ data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAAB4CAIAAAC2BqGFAAAACXBIWXMAAA
 window.onload = function(){
 	cc.game.onStart = function(){
 		
-		cc.view.enableRetina(true);
 		cc.Director.sharedDirector.setDisplayStats(true);
 		//load resources
 		
