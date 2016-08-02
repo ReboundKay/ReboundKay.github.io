@@ -178,7 +178,7 @@ logic.UpdateScoreLabel = function(){
 	var s = "" + g_TotalScore
 	g_RightTopTxt.setString(s);
 	
-	var seq = cc.sequence(cc.scaleTo(0.1,1.1),cc.scaleTo(0.1,1.0));
+	var seq = cc.sequence(cc.scaleTo(0.1,1.2),cc.scaleTo(0.1,1.0));
 	g_RightTopTxt.runAction( seq )
 }
 
@@ -283,6 +283,7 @@ logic.start = function(){
 	g_ClippingNode = cc.ClippingNode.create(stencil)
 	stencil.setPositionX(g_SafeWidth * 0.5);
 	g_RootLayer.addChild(g_ClippingNode,2);
+	g_ClippingNode.setAlphaThreshold(1)
 	g_ClippingNode.setInverted(true);
 	
 	console.log("ground");
@@ -360,7 +361,7 @@ logic.start = function(){
 						if( bAlready == false )
 							g_GainNvshen.push(g_CurNvShenIdx);
 						
-						g_TotalScore += g_ResultThisRound;
+						g_TotalScore += 1; // 改成每次成功加一分 //g_ResultThisRound;
 						
 						if ( g_TotalScore > g_TotalScoreBest ){
 							g_TotalScoreBest = g_TotalScore; // 记录最佳分数
