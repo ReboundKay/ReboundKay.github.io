@@ -40,8 +40,7 @@ background:gray;
 	<script type="text/javascript" src="entry.js" charset="UTF-8"></script>
 	<script type="text/javascript" src="ui.js" charset="UTF-8"></script>
 </head>
-<body>
-	<div class="demo">	
+<body bgcolor="black">
 	<script type="text/javascript" charset="UTF-8">
 	/*
 		function getInfo(){
@@ -77,12 +76,15 @@ background:gray;
 			width = document.body.clientWidth
 			height = width * ratio
 		}
+		
+		var style = "style=\"width:" + width + "px;height:" + height + "px;\""
+		
 		var pre = "<canvas id=\"gameCanvas\" width=\"";
 		
 		var mid = "\" height=\"";
 		
-		var tail = "\"></canvas>";
-		var all = pre+width+mid+height+tail;
+		var tail = "\"" + style + "></canvas>";
+		var all = pre+width*2+mid+height*2+tail;
 		console.log(all);
 		
 		document.write(all+"<br>");
