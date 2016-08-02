@@ -275,16 +275,26 @@ logic.start = function(){
 	console.log("stencil");
 	
 	// stencil 
+	/*
 	var sf_stencil = cc.spriteFrameCache.getSpriteFrame("fk1.jpg");
 	checknull(sf_stencil,"sf_stencil")
 	var stencil = cc.Sprite.createWithSpriteFrame(sf_stencil);
 	checknull(stencil,"stencil")
 	
-	g_ClippingNode = cc.ClippingNode.create(stencil)
+	*/
+	
+	//////////////
+	var green = cc.color(0, 255, 0, 255);
+	var stencil = new cc.DrawNode();
+	stencil.drawRect(cc.p(-100,-100), cc.p(100, 100), green, 2, green);    
 	stencil.setPositionX(g_SafeWidth * 0.5);
+	/////////////////
+	
+	g_ClippingNode = cc.ClippingNode.create(stencil)
+	
 	g_RootLayer.addChild(g_ClippingNode,2);
-	g_ClippingNode.setAlphaThreshold(1)
-	g_ClippingNode.setInverted(true);
+	g_ClippingNode.setAlphaThreshold(0)
+	g_ClippingNode.setInverted(false);
 	
 	console.log("ground");
 	var sf_ground = cc.spriteFrameCache.getSpriteFrame("ground.png");
