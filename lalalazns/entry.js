@@ -12,15 +12,17 @@ var g_CommonBG = null;
 
 var g_CfgSnd = true;
 
+var g_Tree = null;
+
 window.onload = function(){
 	cc.game.onStart = function(){
 		
-		cc.Director.sharedDirector.setDisplayStats(true);
+		cc.Director.sharedDirector.setDisplayStats(false);
 		//load resources
 		
 		var ShouldDownload = [
-			"images/sheet1.plist",
-			"images/sheet1.png",
+			"images/sheet2.plist",
+			"images/sheet2.png",
 			"images/nvshen.plist",
 			"images/nvshen.jpg",
 			"snd/spear_03.wav",
@@ -64,7 +66,7 @@ window.onload = function(){
 					this.addChild(g_RootLayer)
 					
 					// 加载图片
-					cc.spriteFrameCache.addSpriteFrames("images/sheet1.plist");
+					cc.spriteFrameCache.addSpriteFrames("images/sheet2.plist");
 					
 					var oldPixelFormat = cc.Texture2D.defaultPixelFormat;
 					cc.Texture2D.defaultPixelFormat = cc.Texture2D.PIXEL_FORMAT_RGB565;
@@ -123,8 +125,9 @@ window.onload = function(){
 					spTree.setAnchorPoint(0.5, 0);
 					spTree.setPosition(30,120);
 					g_GradLayer.addChild(spTree,0,999);
+					g_Tree = spTree;
 					
-					var batchStar = cc.SpriteBatchNode.create("images/sheet1.png");
+					var batchStar = cc.SpriteBatchNode.create("images/sheet2.png");
 					g_GradLayer.addChild(batchStar);
 					var spStar1 = cc.spriteFrameCache.getSpriteFrame("star.png");
 					var spStar2 = cc.spriteFrameCache.getSpriteFrame("star2.png");

@@ -1,7 +1,7 @@
 
 var logic = logic || {};
 var g_NodeBG = null;
-var g_ClippingNode = null;
+
 var g_NodeFront = null;
 var g_FootHeight = 0.0;
 var g_HoleBottom = 0.0;
@@ -15,6 +15,8 @@ var g_bNewRecord = false;
 var g_TotalScoreBest = 0
 var g_TotalScore = 0
 var g_StartX = 160
+
+var g_HeadSize = 0  // 女神头像的标准大小
 
 
 var RESULT_FAIL_HIT_WALL = -1 // 撞上
@@ -32,6 +34,7 @@ var LOGIC_STEP_TOUCHENDED = 2;
 var g_CurStep = LOGIC_STEP_READY;
 
 var g_RightTopTxt = null;
+var g_RightTopTxt_Shadow = null;
 
 var GAP_DIST_NARROW = 20
 var GAP_DIST_GOOD = 10
@@ -70,13 +73,14 @@ g_AllNvshen.push(new NvshenInfo("东城悯","彩虹女神","10002987","fk17.jpg"
 
 var g_GainNvshen = new Array(); // 已获得的女神
 
-
+var g_Grounds = [null,null]
 
 // 配置女神信息结束
 /////////////////////////////////////////////////////////////////////////////////
 
 logic.RandomHoleSize = function(){
-	g_CurHoleScale = 0.6+ Math.random()*0.4;
+	g_CurHoleScale = 0.7 + Math.random()*0.3;
+	g_HoleBottom = g_FootHeight - g_HeadSize*g_CurHoleScale; // 得到洞底的位置
 }
 
 logic.Transition = function(){
@@ -89,34 +93,21 @@ logic.Transition = function(){
 	var horiMove = cc.p(distHori,0)
 	g_Role.runAction(cc.moveBy(sameTime,horiMove));
 	
-	var speedSten = Math.abs(distHori)/sameTime
-	var outScreenX = -(origSize.width*0.5*g_CurHoleScale)
-	var distOutScreen = g_SafeWidth * 0.5 - outScreenX 
-	var t1 = distOutScreen/speedSten
-	
 	this.RandomHoleSize();
 	
-	var t2 = sameTime-t1
-	var distRight = t2*speedSten
-	var newStenX = g_SafeWidth*0.5 + distRight
+	for( var i=0;i<2;i++ )
+	{
+		var spGround = g_Grounds[i];
+		if( spGround.getPositionX() < 10 ){ //本次即将退出的地面
+			spGround.runAction(cc.sequence(cc.moveBy(sameTime,cc.p(distHori,0)), cc.place(cc.p(g_SafeWidth,0))))
+		}else{ // 下一个地面
+			spGround.runAction(cc.sequence(cc.moveBy(sameTime,cc.p(distHori,0)), cc.callFunc(logic.NewRound)))
+			this.PrepareHoldScale(i);
+		}
+	}
 	
-	console.log("distRight " + distRight + " " + newStenX)
-	temp_Stencil_x = newStenX
-	var stenSeq = cc.sequence(
-		cc.moveBy(t1,cc.p(-distOutScreen,0)),
-		cc.callFunc(logic.ResetStencilPosAndSize ),
-		cc.moveBy(t2,cc.p(-distRight, 0)),
-		cc.callFunc(logic.NewRound)
-	)
+	g_CurBox.runAction(cc.sequence(cc.moveBy(sameTime,cc.p(distHori,0)), cc.removeSelf()))
 	
-	
-	var stencil = g_ClippingNode.getStencil()
-	stencil.runAction(stenSeq);
-	
-	g_CurBox.runAction(cc.sequence(
-		cc.moveBy(sameTime,horiMove),
-		cc.removeSelf()
-	))
 	g_CurBox = null;
 	
 }
@@ -126,22 +117,37 @@ logic.ShowFailedUI = function(){
 	g_RootLayer.removeAllChildren(true);
 	
 	uiman.ShowUI(UI_RESULT)
+	
 }
 
 
-logic.ResetStencilPosAndSize = function(){
-	
+logic.PrepareHoldScale = function(groundIdx){
 	console.log("invoked");
 	
-	var stencil = g_ClippingNode.getStencil();
-	stencil.setScale(g_CurHoleScale);
-	var stenSize = stencil.getContentSize()
-	stencil.setPositionY( g_FootHeight - stenSize.height*g_CurHoleScale*0.5 )
-	stencil.setPositionX(temp_Stencil_x)
+	var ground = g_Grounds[groundIdx];
 	
-	console.log("stencil x is set to " + temp_Stencil_x)
+	var left = ground.getChildByTag(0)
+	var right = ground.getChildByTag(1)
+	var bottom = ground.getChildByTag(2)
 	
-	g_HoleBottom = g_FootHeight - stenSize.height*g_CurHoleScale;
+	
+	var  head = ground.getChildByTag(99);
+	if ( head != null ){
+		head.setScale(g_CurHoleScale);
+	}
+	
+	var w = ground.getContentSize().width
+	var h = ground.getContentSize().height
+	var randomW = g_HeadSize * g_CurHoleScale;
+	
+	var leftX = (w-randomW)*0.5;
+	var rightX = (w+randomW)*0.5;
+	var bottomY = h-randomW;
+	
+	
+	left.setPosition(leftX, h);
+	right.setPosition(rightX,h);
+	bottom.setPosition(w*0.5,bottomY);
 }
 	
 
@@ -177,10 +183,12 @@ function checknull( obj, keyword ){
 logic.UpdateScoreLabel = function(){
 	var s = "" + g_TotalScore
 	g_RightTopTxt.setString(s);
+	g_RightTopTxt_Shadow.setString(s);
 	
 	var seq = cc.sequence(cc.scaleTo(0.1,1.2),cc.scaleTo(0.1,1.0));
 	g_RightTopTxt.runAction( seq )
 }
+
 
 logic.PlayEndOfThisRound = function(){
 	
@@ -212,7 +220,7 @@ logic.PlayEndOfThisRound = function(){
 		var startx = g_Role.getPositionX()
 		var gapLeft = g_CurBox.getPositionX() - (origSize.width*curS*0.5)
 		var gapRight = g_CurBox.getPositionX() + (origSize.width*curS*0.5)
-		var targetx = g_SafeWidth
+		var targetx = startx + g_SafeWidth
 		
 		var lowery = g_CurBox.getPositionY() + (origSize.height*curS*0.5)
 	
@@ -255,6 +263,47 @@ logic.PlayEndOfThisRound = function(){
 	}
 }
 
+function genGound(){
+	var groundPic = createSpriteWithSpriteFrameName("ground.png");
+	groundPic.setAnchorPoint(0,0);
+	
+	var spTree = createSpriteWithSpriteFrameName("tree.png");
+	spTree.setAnchorPoint(0.5, 0);
+	spTree.setPosition(120,130);
+	groundPic.addChild(spTree,-6);
+	
+	var groundLeft = createSpriteWithSpriteFrameName("hole_left.png");
+	checknull(groundLeft)
+	var groundRight = createSpriteWithSpriteFrameName("hole_right.png");
+	checknull(groundRight)
+	var groundBottom = createSpriteWithSpriteFrameName("hole_bottom.png");
+	checknull(groundBottom)
+	
+	//groundLeft.setColor(cc.color(255,0,0,90));
+	//groundRight.setColor(cc.color(255,0,0,90));
+	//groundBottom.setColor(cc.color(255,0,0,90));
+	
+	groundPic.addChild(groundLeft,-1,0);
+	groundPic.addChild(groundRight,-2,1);
+	groundPic.addChild(groundBottom,-3,2);
+	
+	groundLeft.setAnchorPoint(1.0,1.0);
+	groundRight.setAnchorPoint(0.0,1.0);
+	groundBottom.setAnchorPoint(0.5,1.0);
+	
+	
+	var gsize = groundPic.getContentSize();
+	/*
+	var head = createSpriteWithSpriteFrameName("fk1.jpg");
+	groundPic.addChild(head,0,99)
+	head.setAnchorPoint(0.5,1.0)
+	head.setOpacity(100);
+	head.setPosition(gsize.width*0.5, gsize.height)
+	调试，这段用来看实际的范围
+	*/ 
+	return groundPic
+}
+
 logic.start = function(){
 	cc.log("logic.start")
 	
@@ -262,7 +311,24 @@ logic.start = function(){
 	g_TotalScore = 0;
 	g_GainNvshen.splice(0,g_GainNvshen.length);
 	
-	g_NodeBG = cc.Node.create();//cc.SpriteBatchNode.create('images/sheet1.png');
+	var temp_head_for_size = createSpriteWithSpriteFrameName("fk1.jpg");
+	g_HeadSize = temp_head_for_size.getContentSize().width;
+	console.log("standard head size is " + g_HeadSize);
+	
+	
+	g_NodeBG = cc.Node.create();//cc.SpriteBatchNode.create('images/sheet2.png');
+	
+	g_NodeBG.onEnter = function(){
+		cc.Node.prototype.onEnter.call(this);
+		if(g_Tree!== null)
+			g_Tree.setVisible(false);
+	};
+	g_NodeBG.onExit = function(){
+		cc.Node.prototype.onExit.call(this);
+		if(g_Tree!== null)
+			g_Tree.setVisible(true);
+	};
+	
 	g_RootLayer.addChild(g_NodeBG,1)
 	g_NodeFront = cc.Node.create();
 	g_RootLayer.addChild(g_NodeFront,3);
@@ -272,41 +338,27 @@ logic.start = function(){
 	g_RootLayer.addChild(g_RightTopTxt,99);
 	g_RightTopTxt.setPosition(600,800);
 	
-	console.log("stencil");
-	
-	// stencil 
-	/*
-	var sf_stencil = cc.spriteFrameCache.getSpriteFrame("fk1.jpg");
-	checknull(sf_stencil,"sf_stencil")
-	var stencil = cc.Sprite.createWithSpriteFrame(sf_stencil);
-	checknull(stencil,"stencil")
-	
-	*/
-	
-	//////////////
-	var green = cc.color(0, 255, 0, 255);
-	var stencil = new cc.DrawNode();
-	stencil.drawRect(cc.p(-100,-100), cc.p(100, 100), green, 2, green);    
-	stencil.setPositionX(g_SafeWidth * 0.5);
-	/////////////////
-	
-	g_ClippingNode = cc.ClippingNode.create(stencil)
-	
-	g_RootLayer.addChild(g_ClippingNode,2);
-	g_ClippingNode.setAlphaThreshold(0)
-	g_ClippingNode.setInverted(false);
+	g_RightTopTxt_Shadow = cc.LabelTTF.create("0","Arial", 40);
+	g_RightTopTxt.addChild(g_RightTopTxt_Shadow,-1)
+	g_RightTopTxt_Shadow.setAnchorPoint(0,0);
+	g_RightTopTxt_Shadow.setColor(cc.color(0,0,0));
+	g_RightTopTxt_Shadow.setPosition(2,-2);
 	
 	console.log("ground");
-	var sf_ground = cc.spriteFrameCache.getSpriteFrame("ground.png");
-	checknull(sf_ground,"sf_ground")
-	var ground = cc.Sprite.createWithSpriteFrame(sf_ground);
-	checknull(ground,"ground")
 	
-	ground.setAnchorPoint(0,0);
-	ground.setPosition(0,0);
-	g_ClippingNode.addChild(ground);
+	var ground1 = genGound();
+	var ground2 = genGound();
 	
-	g_FootHeight = ground.getContentSize().height
+	g_Grounds[0] = ground1;
+	g_Grounds[1] = ground2;
+	
+	g_NodeBG.addChild(ground1);
+	g_NodeBG.addChild(ground2);
+	
+	ground1.setPosition(0,0);
+	ground2.setPosition(ground1.getContentSize().width,0);
+	
+	g_FootHeight = ground1.getContentSize().height
 	var sf_role = cc.spriteFrameCache.getSpriteFrame("role.png");
 	g_Role = cc.Sprite.createWithSpriteFrame(sf_role);
 	g_Role.setAnchorPoint(0.5,0.0);
@@ -387,7 +439,7 @@ logic.start = function(){
 					
 					var cbRoleBehave = cc.callFunc(logic.PlayEndOfThisRound)
 					var targetPos = cc.p(g_SafeWidth * 0.5,targetBoxY)
-					var seq = cc.sequence(cc.jumpTo(0.5,targetPos,100,1),cc.jumpTo(0.1,targetPos,10,1),cbRoleBehave)
+					var seq = cc.sequence(cc.jumpTo(0.5,targetPos,150,1),cc.jumpTo(0.1,targetPos,10,1),cbRoleBehave)
 					g_CurBox.runAction(seq);
 					
 					g_CurStep = LOGIC_STEP_TOUCHENDED;
@@ -398,8 +450,7 @@ logic.start = function(){
 	
 	// 随机洞口大小
 	this.RandomHoleSize();
-	temp_Stencil_x = g_SafeWidth*0.5
-	this.ResetStencilPosAndSize( );
+	this.PrepareHoldScale(0);
 	this.NewRound();
 
 	

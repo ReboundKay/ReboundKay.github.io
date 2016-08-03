@@ -169,29 +169,8 @@ function isString(str){
 	return (typeof str=='string')&&str.constructor==String; 
 } 
 
-cc.DrawingPrimitiveCanvas.drawImage = function (image, sourcePoint, sourceSize, destPoint, destSize) {
-	
-	console.log(sourcePoint)
-	console.log(sourceSize)
-	console.log(destPoint)
-	console.log(destSize)
-	
-    var len = arguments.length;
-    var ctx = this._renderContext.getContext();
-    switch (len) {
-        case 2:
-            var height = image.height;
-            ctx.drawImage(image, sourcePoint.x, -(sourcePoint.y + height));
-            break;
-        case 3:
-            ctx.drawImage(image, sourcePoint.x, -(sourcePoint.y + sourceSize.height), sourceSize.width, sourceSize.height);
-            break;
-        case 5:
-            ctx.drawImage(image, sourcePoint.x, sourcePoint.y, sourceSize.width, sourceSize.height, destPoint.x, -(destPoint.y + destSize.height),
-                destSize.width, destSize.height);
-            break;
-        default:
-            throw new Error("Argument must be non-nil");
-            break;
-    }
+function createSpriteWithSpriteFrameName( sfName ){
+	var sf = cc.spriteFrameCache.getSpriteFrame(sfName);
+	var sp = cc.Sprite.createWithSpriteFrame(sf);
+	return sp;
 }
