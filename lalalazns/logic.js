@@ -224,7 +224,7 @@ logic.PlayEndOfThisRound = function(){
 		
 		var lowery = g_CurBox.getPositionY() + (origSize.height*curS*0.5)
 	
-		var walkTime = 2.0
+		var walkTime = 1.5
 		var allDist = targetx - startx
 		var t1 = walkTime * (gapLeft-startx)/allDist
 		var t2 = walkTime * (gapRight-gapLeft)/allDist
@@ -362,7 +362,7 @@ logic.start = function(){
 	var sf_role = cc.spriteFrameCache.getSpriteFrame("role.png");
 	g_Role = cc.Sprite.createWithSpriteFrame(sf_role);
 	g_Role.setAnchorPoint(0.5,0.0);
-	g_Role.setScale(0.8);
+	g_Role.setScale(0.6);
 	g_Role.setPosition(g_StartX,g_FootHeight);
 	g_NodeFront.addChild(g_Role,3);
 	
@@ -375,7 +375,7 @@ logic.start = function(){
 			onTouchBegan: function (touch, event) {     //实现 onTouchBegan 事件回调函数
 				console.log("touchbegin");
 				if (g_CurStep == LOGIC_STEP_READY){
-					g_CurBox.runAction(cc.scaleTo(2,1.5));
+					g_CurBox.runAction(cc.scaleTo(1,1.5));
 					g_CurStep = LOGIC_STEP_TOUCHBEGAN;
 				}
 					
