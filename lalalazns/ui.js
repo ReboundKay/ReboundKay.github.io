@@ -13,11 +13,11 @@ function onBridgeReady(){
 	if (g_TotalScoreBest > 0 ){
 		descContent = "我得了" + g_TotalScoreBest + "分，求超越";
 	}else{
-		descContent = "啦啦啦种女神啦";
+		descContent = "据说得到100分的都是神！";
 	}
 	WeixinJSBridge.on('menu:share:appmessage', function (argv) {
         WeixinJSBridge.invoke('sendAppMessage', {			
-			"title": "据说得到100分的都是神！", 
+			"title": "啦啦啦种女神", 
 			"link": "https://reboundkay.github.io/lalalazns/index.html", 
 			"desc": descContent,
 			"img_url": "https://reboundkay.github.io/lalalazns/images/logo300.png", 
@@ -27,9 +27,9 @@ function onBridgeReady(){
 	});
 	WeixinJSBridge.on('menu:share:timeline', function (argv) {
         WeixinJSBridge.invoke('shareTimeline', {			
-			"title": "据说得到100分的都是神！", 
+			"title": descContent, 
 			"link": "https://reboundkay.github.io/lalalazns/index.html", 
-			"desc": descContent,
+			"desc": "啦啦啦种女神",
 			"img_url": "https://reboundkay.github.io/lalalazns/images/logo300.png", 
         }, function (res) {
 			_report('send_msg', res.err_msg);
