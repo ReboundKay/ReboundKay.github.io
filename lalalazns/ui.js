@@ -7,19 +7,24 @@ var UI_LOBBY = 1
 var UI_RESULT = 2
 var UI_HELP = 3
 
-function onBridgeReady(){
-	
+function __GenContent(){
 	var descContent = "";
-	if (g_TotalScoreBest > 0 ){
-		descContent = "我得了" + g_TotalScoreBest + "分，求超越";
+	if (g_TotalScore > 0 ){
+		descContent = "我得了" + g_TotalScore + "分，求超越";
 	}else{
-		descContent = "据说得到100分的都是神！";
+		descContent = "据说得到100分的都是神！!";
 	}
+	return descContent;
+}
+
+function onBridgeReady(){
+
 	WeixinJSBridge.on('menu:share:appmessage', function (argv) {
+		
         WeixinJSBridge.invoke('sendAppMessage', {			
-			"title": "啦啦啦种女神", 
+			"title": __GenContent(), 
 			"link": "https://reboundkay.github.io/lalalazns/index.html", 
-			"desc": descContent,
+			"desc": "啦啦啦种女神",
 			"img_url": "https://reboundkay.github.io/lalalazns/images/logo300.png", 
         }, function (res) {
 			_report('send_msg', res.err_msg);
@@ -27,7 +32,7 @@ function onBridgeReady(){
 	});
 	WeixinJSBridge.on('menu:share:timeline', function (argv) {
         WeixinJSBridge.invoke('shareTimeline', {			
-			"title": descContent, 
+			"title": __GenContent(), 
 			"link": "https://reboundkay.github.io/lalalazns/index.html", 
 			"desc": "啦啦啦种女神",
 			"img_url": "https://reboundkay.github.io/lalalazns/images/logo300.png", 
@@ -102,6 +107,9 @@ uiman.ShowUILobby = function(){
 	});
 	obj.uinode.addChild( btn_help,0 );
 	btn_help.setPosition(w*0.5 - 200, h*0.1);
+	
+	// 注册微信分享相关
+	document.addEventListener('WeixinJSBridgeReady', onBridgeReady(), false)
 	
 	return obj
 }
@@ -249,15 +257,6 @@ uiman.ShowUIResult = function(){
 	btn_again.setPosition(460,heightBottom*0.5)
 	bottomPart.addChild(btn_again);
 	
-	
-	var btn_share = glb_GenSpriteButton("images/share.png", function(){
-		
-		WeiXinShareBtn()
-	});
-	btn_share.setPosition(600,heightBottom*0.5);
-	bottomPart.addChild(btn_share);
-	
-	
 	//　中间内容部分
 	var centerPart = cc.Layer.create();
 	centerPart.setContentSize(g_SafeWidth, heightCenter);
@@ -340,8 +339,6 @@ uiman.ShowUIResult = function(){
 	}
 	
 	obj.gotoPage(0);
-	
-	document.addEventListener('WeixinJSBridgeReady', onBridgeReady(), false)
 	
 	return obj;
 }
