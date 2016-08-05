@@ -92,7 +92,35 @@ function glb_AddRadioClickEvent( node, func_cb ){
 	});
 	cc.eventManager.addListener( listener, node );
 }
-
+function glb_GenSpriteButton( pic, callback ){
+	var sp = cc.Sprite.create(pic);
+	
+	var listener = cc.EventListener.create({
+		
+		event: cc.EventListener.TOUCH_ONE_BY_ONE,
+		swallowTouches: true,
+		onTouchBegan: function (touch, event) {
+			console.log("button  touchbegin");
+			var bIn = glb_WorldPtInNode(sp,touch.getLocation());
+			if ( bIn == true ){
+				sp.setScale(1.1);
+				return true
+			}
+			return false;
+		},
+		onTouchEnded: function (touch, event) {
+			console.log("button touchend");
+			var bIn = glb_WorldPtInNode(sp,touch.getLocation());
+			if ( bIn == true ){
+				callback(sp)
+			}
+			sp.setScale(1.0);
+		}
+	});
+	cc.eventManager.addListener( listener, sp );
+	
+	return sp;
+}
 function glb_GenSpriteFrameButtonEx( pic1, pic2, txt, callback, isRadio ){
 	
 	var sf1 = cc.spriteFrameCache.getSpriteFrame(pic1);

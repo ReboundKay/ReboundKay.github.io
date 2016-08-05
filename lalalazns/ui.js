@@ -7,17 +7,39 @@ var UI_LOBBY = 1
 var UI_RESULT = 2
 var UI_HELP = 3
 
+function onBridgeReady(){
+	
+	var descContent = "";
+	if (g_TotalScore > 0 ){
+		descContent = "我得了" + g_TotalScore + "分，求超越";
+	}else{
+		descContent = "啦啦啦种女神啦";
+	}
+	
+	//WeixinJSBridge.invoke('sendAppMessage', { 
+	WeixinJSBridge.invoke('shareTimeline', { 
+	 "title": "据说得到100分的都是神！", 
+	 "link": "https://reboundkay.github.io/lalalazns/index.html", 
+	 "desc": descContent,
+	 "img_url": "https://reboundkay.github.io/lalalazns/images/logo300.png", 
+	 }); 
+}
+
 function WeiXinShareBtn() { 
 	 if (typeof WeixinJSBridge == "undefined") { 
-	 alert("微信分享测试逻辑"); 
+	 
+		window.alert("try to init");
+	 
+		if( document.addEventListener ){
+			document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+		}else if (document.attachEvent){
+			document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
+			document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+		}
+		
 	 } else { 
-	 WeixinJSBridge.invoke('shareTimeline', { 
-	 "title": "种女神", 
-	 "link": "www.163.com", 
-	 "desc": "普通描述八个字啊", 
-	 "img_url": "http://www.36kr.com/assets/images/apple-touch-icon.png" 
-	 }); 
-	 } 
+		onBridgeReady();
+	 }
  }
 
 uiman.ShowUILobby = function(){
@@ -28,7 +50,6 @@ uiman.ShowUILobby = function(){
 	var w = g_SafeWidth
 	var h = g_SafeHeight
 	obj.uinode.setContentSize(w,h);
-	
 	
 	// title
 	var gameLogoSF = cc.spriteFrameCache.getSpriteFrame("game_logo.png");
@@ -231,6 +252,14 @@ uiman.ShowUIResult = function(){
 	
 	btn_again.setPosition(460,heightBottom*0.5)
 	bottomPart.addChild(btn_again);
+	
+	
+	var btn_share = glb_GenSpriteButton("images/share.png", function(){
+		
+		WeiXinShareBtn()
+	});
+	btn_share.setPosition(600,heightBottom*0.5);
+	bottomPart.addChild(btn_share);
 	
 	
 	//　中间内容部分
