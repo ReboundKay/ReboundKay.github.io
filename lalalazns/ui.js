@@ -10,35 +10,33 @@ var UI_HELP = 3
 function onBridgeReady(){
 	
 	var descContent = "";
-	if (g_TotalScore > 0 ){
-		descContent = "我得了" + g_TotalScore + "分，求超越";
+	if (g_TotalScoreBest > 0 ){
+		descContent = "我得了" + g_TotalScoreBest + "分，求超越";
 	}else{
 		descContent = "啦啦啦种女神啦";
 	}
+	WeixinJSBridge.on('menu:share:appmessage', function (argv) {
+        WeixinJSBridge.invoke('sendAppMessage', {			
+			"title": "据说得到100分的都是神！", 
+			"link": "https://reboundkay.github.io/lalalazns/index.html", 
+			"desc": descContent,
+			"img_url": "https://reboundkay.github.io/lalalazns/images/logo300.png", 
+        }, function (res) {
+			_report('send_msg', res.err_msg);
+		})
+	});
+	WeixinJSBridge.on('menu:share:timeline', function (argv) {
+        WeixinJSBridge.invoke('shareTimeline', {			
+			"title": "据说得到100分的都是神！", 
+			"link": "https://reboundkay.github.io/lalalazns/index.html", 
+			"desc": descContent,
+			"img_url": "https://reboundkay.github.io/lalalazns/images/logo300.png", 
+        }, function (res) {
+			_report('send_msg', res.err_msg);
+		})
+	});
 	
-	//WeixinJSBridge.invoke('sendAppMessage', { 
-	WeixinJSBridge.invoke('shareTimeline', { 
-	 "title": "据说得到100分的都是神！", 
-	 "link": "https://reboundkay.github.io/lalalazns/index.html", 
-	 "desc": descContent,
-	 "img_url": "https://reboundkay.github.io/lalalazns/images/logo300.png", 
-	 }); 
 }
-
-function WeiXinShareBtn() { 
-	 if (typeof WeixinJSBridge == "undefined") { 
-	 
-		if( document.addEventListener ){
-			document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
-		}else if (document.attachEvent){
-			document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
-			document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
-		}
-		
-	 } else { 
-		onBridgeReady();
-	 }
- }
 
 uiman.ShowUILobby = function(){
 	var obj = {
@@ -343,6 +341,7 @@ uiman.ShowUIResult = function(){
 	
 	obj.gotoPage(0);
 	
+	document.addEventListener('WeixinJSBridgeReady', onBridgeReady(), false)
 	
 	return obj;
 }
