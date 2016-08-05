@@ -28,8 +28,6 @@ function onBridgeReady(){
 function WeiXinShareBtn() { 
 	 if (typeof WeixinJSBridge == "undefined") { 
 	 
-		window.alert("try to init");
-	 
 		if( document.addEventListener ){
 			document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
 		}else if (document.attachEvent){
