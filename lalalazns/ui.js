@@ -137,8 +137,7 @@ uiman.ShowUILobby = function(){
 	
 	// 注册微信分享相关
 	//document.addEventListener('WeixinJSBridgeReady', onBridgeReady(), false)
-	
-	onBridgeReady();
+	//onBridgeReady();
 	
 	return obj
 }
@@ -368,7 +367,7 @@ uiman.ShowUIResult = function(){
 	}
 	
 	obj.gotoPage(0);
-	onBridgeReady()
+	//onBridgeReady()
 	
 	return obj;
 }
