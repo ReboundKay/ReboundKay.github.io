@@ -19,6 +19,33 @@ function __GenContent(){
 
 function onBridgeReady(){
 
+	wx.onMenuShareTimeline({
+    title: __GenContent(), // 分享标题
+    link: 'https://reboundkay.github.io/lalalazns/index.html', // 分享链接
+    imgUrl: 'https://reboundkay.github.io/lalalazns/images/logo300.png', // 分享图标
+    success: function () {
+        window.alert('分享成功')
+    },
+    cancel: function () {
+        // 用户取消分享后执行的回调函数
+    }
+	});
+	
+	
+	wx.onMenuShareAppMessage({
+    title: __GenContent(), // 分享标题
+    desc: '啦啦啦种女神', // 分享描述
+    link: 'https://reboundkay.github.io/lalalazns/index.html', // 分享链接
+    imgUrl: 'https://reboundkay.github.io/lalalazns/images/logo300.png', // 分享图标
+    success: function () {
+        // 用户确认分享后执行的回调函数
+    },
+    cancel: function () {
+        // 用户取消分享后执行的回调函数
+    }
+	});
+
+	/*
 	WeixinJSBridge.on('menu:share:appmessage', function (argv) {
 		
         WeixinJSBridge.invoke('sendAppMessage', {			
@@ -40,7 +67,7 @@ function onBridgeReady(){
 			_report('send_msg', res.err_msg);
 		})
 	});
-	
+	*/
 }
 
 uiman.ShowUILobby = function(){
@@ -109,7 +136,9 @@ uiman.ShowUILobby = function(){
 	btn_help.setPosition(w*0.5 - 200, h*0.1);
 	
 	// 注册微信分享相关
-	document.addEventListener('WeixinJSBridgeReady', onBridgeReady(), false)
+	//document.addEventListener('WeixinJSBridgeReady', onBridgeReady(), false)
+	
+	onBridgeReady();
 	
 	return obj
 }
@@ -339,6 +368,7 @@ uiman.ShowUIResult = function(){
 	}
 	
 	obj.gotoPage(0);
+	onBridgeReady()
 	
 	return obj;
 }
