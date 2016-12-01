@@ -1,0 +1,182 @@
+﻿
+<title>绘制多对象 - www.web-tinker.com</title>
+<canvas id="canvas" width="400" height="400"></canvas>
+<script id="vs_s" type="text/plain">
+attribute vec3 po;
+attribute vec3 co;
+
+uniform mat4 pro;
+uniform mat4 tra; //变换矩阵，包含旋转和平移
+varying vec3 co_v;
+
+attribute vec2 uvo;
+varying   vec2 vTextureCoord;
+void main(){
+  co_v=co;
+  vTextureCoord = uvo;
+  gl_Position=pro*tra*vec4(po,1.0);
+}
+</script>
+<script id="fs_s" type="text/plain">
+#ifdef GL_FRAGMENT_PRECISION_HIGH 
+	precision highp float;
+#else 
+	precision mediump float;
+#endif
+varying vec3 co_v;
+varying vec2 vTextureCoord;
+uniform sampler2D texture;
+void main(){
+	vec4 smpColor = texture2D(texture, vTextureCoord);
+	gl_FragColor= smpColor * vec4(co_v,1.0);
+}
+</script>
+<script>
+
+	// 数据定义
+	var len = 2
+	var data_Verts = [
+	  -len,-len,-len, 
+	  len,-len,-len,
+	  -len,len,-len, 
+	  len,len,-len,
+	  
+	  -len,-len,len,
+	  len,-len,len, 
+	  -len,len,len,
+	  len,len,len,
+	  
+	  -len,-len,-len,
+	  -len,len,-len, 
+	  -len,-len,len, 
+	  -len,len,len,
+	  
+	  
+	  len,-len,-len, 
+	  len,len,-len, 
+	  len,-len,len,
+	  len,len,len,
+	  
+	  -len,-len,-len, 
+	  len,-len,-len,
+	  -len,-len,len, 
+	  len,-len,len,
+	  
+	  -len,len,-len,
+	  len,len,-len, 
+	  -len,len,len, 
+	  len,len,len
+	];
+	data_color = [
+		[1,1,1],[1,1,1],[1,1,1],[1,1,1],[1,1,1],[1,1,1]
+	];
+	data_uv = [
+		0,0,
+		1,0,
+		0,1,
+		1,1
+	];
+
+	function SetVBO( data_arr, const_name, const_stride, const_Type ){
+		var constVar =webgl.getAttribLocation(program,const_name);
+		webgl.enableVertexAttribArray(constVar);
+		var buf=webgl.createBuffer();
+		webgl.bindBuffer(webgl.ARRAY_BUFFER,buf);
+		webgl.bufferData(webgl.ARRAY_BUFFER,new Float32Array(data_arr),webgl.STATIC_DRAW);
+		webgl.vertexAttribPointer(constVar,const_stride,const_Type,false,0,0);
+	}
+	
+	//准备
+	var webgl,program,vs,fs,i,j,dat,tmp,buf;
+	var bDrag = false, rot1 = 0, rot2 = 0;
+	webgl=canvas.getContext("experimental-webgl");
+
+	var myTexture = webgl.createTexture();
+	myTexture.image = new Image();
+	myTexture.image.onload = function () {
+		webgl.bindTexture(webgl.TEXTURE_2D, myTexture);
+		webgl.pixelStorei(webgl.UNPACK_FLIP_Y_WEBGL, true);
+		webgl.texImage2D(webgl.TEXTURE_2D, 0, webgl.RGBA, webgl.RGBA, webgl.UNSIGNED_BYTE, myTexture.image);
+		webgl.texParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_MAG_FILTER, webgl.LINEAR);
+		webgl.texParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_MIN_FILTER, webgl.LINEAR);
+		webgl.bindTexture(webgl.TEXTURE_2D, null);
+	}
+	myTexture.image.src = "zhuan.jpg";//"2.png";
+	
+	//着色器相关
+	program=webgl.createProgram();
+	vs=webgl.createShader(webgl.VERTEX_SHADER);
+	fs=webgl.createShader(webgl.FRAGMENT_SHADER);
+	webgl.shaderSource(vs,vs_s.textContent);
+	webgl.shaderSource(fs,fs_s.textContent);
+	webgl.compileShader(vs);
+	webgl.compileShader(fs);
+	webgl.attachShader(program,vs);
+	webgl.attachShader(program,fs);
+	webgl.linkProgram(program);
+	webgl.useProgram(program);
+
+	//顶点属性相关
+	SetVBO( data_Verts, "po", 3, webgl.FLOAT);
+	
+	// 颜色
+	for(dat=[],i=0;i<6;i++)
+		for(j=0;j<4;j++)
+			dat.push.apply(dat,data_color[i]);
+	SetVBO( dat, "co", 3, webgl.FLOAT);
+	
+	// UV坐标
+	for (dat=[],i=0;i<6;i++){
+		dat.push.apply(dat,data_uv);
+	}
+	SetVBO( dat, "uvo", 2, webgl.FLOAT);
+	
+	//全局属性相关
+	var pro,mov,rot;
+	pro=webgl.getUniformLocation(program,"pro");
+	tra=webgl.getUniformLocation(program,"tra");
+	webgl.uniformMatrix4fv(pro,false,[
+	  1,0,0,0, 0,1,0,0, 0,0,-1,-1, 0,0,-2,0, 
+	]);
+
+	//绘制相关
+	dat=[];
+	for(i=0;i<24;i+=4)dat.push(i,i+1,i+2,i+2,i+1,i+3);
+	buf=webgl.createBuffer();
+	webgl.bindBuffer(webgl.ELEMENT_ARRAY_BUFFER,buf);
+	webgl.bufferData(
+	  webgl.ELEMENT_ARRAY_BUFFER,new Uint16Array(dat),webgl.STATIC_DRAW
+	);
+	webgl.enable(webgl.DEPTH_TEST);
+	var a=0;
+	setInterval(function(){
+		a+=0.02;
+	  //计算旋转参数
+	  var angel = rot1 * Math.PI * 0.25;
+	  var s=Math.sin(angel),c=Math.cos(angel);
+	  
+	  var e = [c,0,-s,0, 0,1,0,0, s,0,c,0, 0,0,-1.0,1];
+	  //二重循环绘制多个元素
+	  //更具循环变量和旋转参数构造变化矩阵（平移·旋转）
+		webgl.uniformMatrix4fv(tra,false,e);
+		//绘制
+		webgl.bindTexture(webgl.TEXTURE_2D, myTexture)
+		webgl.drawElements(webgl.TRIANGLES,36,webgl.UNSIGNED_SHORT,0);
+	},16);
+	
+	canvas.onmousedown = function(e){
+		bDrag = true
+	}
+	canvas.onmousemove = function(e){
+		if( bDrag == true ){
+			var e = window.event || e
+			var rect = this.getBoundingClientRect();
+			rot1 = -1 + 2 * e.clientX / rect.width;
+			rot2 = 1 - 2 * e.clientY / rect.height;
+		}
+	}
+	canvas.onmouseup = function(e){
+		bDrag = false
+	}
+	
+</script>
