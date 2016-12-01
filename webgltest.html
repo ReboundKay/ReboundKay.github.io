@@ -1,5 +1,5 @@
 ﻿
-<title>绘制多对象 - www.web-tinker.com</title>
+<title>webGLTest</title>
 <canvas id="canvas" width="400" height="400"></canvas>
 <script id="vs_s" type="text/plain">
 attribute vec3 po;
@@ -153,7 +153,7 @@ void main(){
 		a+=0.02;
 	  //计算旋转参数
 	  var angel = rot1 * Math.PI * 0.25;
-	  var s=Math.sin(angel),c=Math.cos(angel);
+	  var s=Math.sin(a),c=Math.cos(a);
 	  
 	  var e = [c,0,-s,0, 0,1,0,0, s,0,c,0, 0,0,-1.0,1];
 	  //二重循环绘制多个元素
