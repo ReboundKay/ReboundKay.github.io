@@ -1,54 +1,86 @@
 ﻿
 <title>滤镜调整工具，调整完成后。记录下方那一组数值</title>
 <head>
+<script src='colorpicker.js' ></script>
+
 <style>
 	body { font-family: Arial， Helvetica， sans-serif; font-size:12px; }
 </style>
 </head>
 <body bgcolor="gray">
+<table width="100%" border="1">
+  <col align="top" />
+  <col align="top" />
+  <tr>
+    <td>
+	<canvas id="canvas" width="800" height="600" color="red"></canvas>
+	<br>
+	<select id="SelectPic" style="width:200px;" onclick="onChangePicClicked()">  
+	  <option value =1>1：秋天黄叶小路高圆圆</option>  
+	  <option value =2>2：泳装</option>
+	  <option value =3>3：篮球</option>
+	  <option value =4>4：高圆圆</option>
+	  <option value =5>5：纹身妹子</option>
+	  <option value =6>6：周迅</option>
+	  <option value =7>7：街头</option>
+	  <option value =8>8：滑板</option>
+	  <option value =9>9：时尚</option>
+	  <option value =10>10：演唱会</option>
+	</select> 
+	<br>
+	调整完成后，记录右边数值：
+	<br>
+	<input id="textresult" type="edit" style="width:600px;"></input>
+	<br>
+	<button type='button' onclick='onSetValueToCtrl()'>
+	将数值设置给UI
+	</button>
+	<br>
+	<input id="range_dbd" type="range" min="0.0" max="2.0" value="1"step="0.001" style="width:200px;" onchange="onSliderChange()" oninput="onSliderChange()"> 对比度：<span id="value_dbd">0</span><br>
+	<input id="range_bhd" type="range" min="0.0" max="2.0" value="1"step="0.001" style="width:200px;" onchange="onSliderChange()" oninput="onSliderChange()"> 饱和度：<span id="value_bhd">0</span><br>
+	<br>
+	<input id="range_sx" type="range" min="-2.0" max="2.0" value="0"step="0.001" style="width:200px;" onchange="onSliderChange()" oninput="onSliderChange()"> 色相：<span id="value_sx">0</span><br>
+	<input id="range_sw" type="range" min="-5.0" max="5.0" value="0"step="0.001" style="width:200px;" onchange="onSliderChange()" oninput="onSliderChange()"> 色温：<span id="value_sw">0</span><br>
+	<input id="range_rh" type="range" min="-5.0" max="10.0" value="0"step="0.001" style="width:200px;" onchange="onSliderChange()" oninput="onSliderChange()"> 锐化：<span id="value_rh">0</span><br>
+	<input id="range_aj" type="range" min="1.0" max="10.0" value="2"step="0.001" style="width:200px;" onchange="onSliderChange()" oninput="onSliderChange()"> 暗角：<span id="value_aj">0</span><br>
+	<!--下面是没用到的input id="range_sj" type="range" min="0.0" max="2.0" value="0"step="0.01" style="width:200px;"> 色阶：<span id="value_sj">0</span><br>
+	-->
+	</td>
+    <td>
+	<script>
+		function onColorChanged(){
+			console.log('change')
+			Render();
+		}
+		CreatePickerManually('暗部','pickerLow', onColorChanged);
+		CreatePickerManually('中间','pickerMid', onColorChanged);
+		CreatePickerManually('亮部','pickerHigh', onColorChanged);
+	</script>
+	</td>
+  </tr>
+</table>
 
-<canvas id="canvas" width="800" height="600" color="red"></canvas>
-<br>
 <!--
+
+<script>
+
+</script>
+<col align="left" />
+<script>
+CreatePickerManually('','pickerMid', onColorChanged);
+</script>
+<col align="left" />
+<script>
+CreatePickerManually('','pickerHigh', onColorChanged);
+</script>
+
 <input id="txtPicPath" type="edit" style="width:400px;"/>
 </input>
 <button id="btnChangePic" type="button" onclick="onBtnChangePic()">
 选择左边填写的图片
 </button>
 -->
-<br>
-<select id="SelectPic" style="width:200px;" onclick="onChangePicClicked()">  
-  <option value =1>1：秋天黄叶小路高圆圆</option>  
-  <option value =2>2：泳装</option>
-  <option value =3>3：篮球</option>
-  <option value =4>4：高圆圆</option>
-  <option value =5>5：纹身妹子</option>
-  <option value =6>6：周迅</option>
-  <option value =7>7：街头</option>
-  <option value =8>8：滑板</option>
-  <option value =9>9：时尚</option>
-  <option value =10>10：演唱会</option>
-</select> 
-  调整完成后，记录右边数值：
-<input id="textresult" type="edit" style="width:400px;">--</input>
 
-<br>
-<div>
-<input id="range_dbd" type="range" min="0.0" max="2.0" value="1"step="0.001" style="width:200px;" onchange="onSliderChange()" oninput="onSliderChange()"> 对比度：<span id="value_dbd">0</span><br>
-<input id="range_bhd" type="range" min="0.0" max="2.0" value="1"step="0.001" style="width:200px;" onchange="onSliderChange()" oninput="onSliderChange()"> 饱和度：<span id="value_bhd">0</span><br>
-<input id="range_ld" type="range" min="0" max="2.0" value="1"step="0.001" style="width:200px;" onchange="onSliderChange()" oninput="onSliderChange()"> 亮度：<span id="value_ld">0</span><br>
-<input id="range_sx" type="range" min="-2.0" max="2.0" value="0"step="0.001" style="width:200px;" onchange="onSliderChange()" oninput="onSliderChange()"> 色相：<span id="value_sx">0</span><br>
-<input id="range_sw" type="range" min="-5.0" max="5.0" value="0"step="0.001" style="width:200px;" onchange="onSliderChange()" oninput="onSliderChange()"> 色温：<span id="value_sw">0</span><br>
-<input id="range_rh" type="range" min="-5.0" max="10.0" value="0"step="0.001" style="width:200px;" onchange="onSliderChange()" oninput="onSliderChange()"> 锐化：<span id="value_rh">0</span><br>
-<input id="range_aj" type="range" min="1.0" max="10.0" value="2"step="0.001" style="width:200px;" onchange="onSliderChange()" oninput="onSliderChange()"> 暗角：<span id="value_aj">0</span><br>
-<input id="range_r" type="range" min="0.0" max="2.0" value="1"step="0.001" style="width:200px;" onchange="onSliderChange()" oninput="onSliderChange()"> Tint_R：<span id="value_r">0</span><br>
-<input id="range_g" type="range" min="0.0" max="2.0" value="1"step="0.001" style="width:200px;" onchange="onSliderChange()" oninput="onSliderChange()"> Tint_G：<span id="value_g">0</span><br>
-<input id="range_b" type="range" min="0.0" max="2.0" value="1"step="0.001" style="width:200px;" onchange="onSliderChange()" oninput="onSliderChange()"> Tint_B：<span id="value_b">0</span><br>
-
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-下面是没用到的
-<input id="range_sj" type="range" min="0.0" max="2.0" value="0"step="0.01" style="width:200px;"> 色阶：<span id="value_sj">0</span><br>
-</div>
 
 <script id="vs_s" type="text/plain">
 attribute vec3 po;
@@ -76,10 +108,12 @@ varying vec3 co_v;
 varying vec2 vTextureCoord;
 uniform sampler2D texture;
 
-uniform vec4 group1; // xyzw: contrast , saturate, colorLevel, bright
+uniform vec4 group1; // xyzw: contrast , saturate, colorLevel, 未用
 uniform vec4 group2; // xyzw: 色相，色温，锐化/Blur，暗角
 uniform vec4 group3; // 
-uniform vec4 tint; // rgb tint color
+uniform vec4 tintLow;
+uniform vec4 tintMid;
+uniform vec4 tintHigh;
 
 uniform vec4 otherparam; // xyzw: upixel, vpixel
 
@@ -94,6 +128,10 @@ const mediump mat3 YIQtoRGB = mat3(1.0, 0.956, 0.621, 1.0, -0.272, -0.647, 1.0, 
  const vec4  kYIQToG   = vec4 (1.0, -0.2721, -0.6474, 0.0);
  const vec4  kYIQToB   = vec4 (1.0, -1.1070, 1.7046, 0.0);
 
+ const float spot_low = 0.3333;
+ const float spot_mid = 0.6666;
+ const float spot_high = 1.0;
+ 
  vec3 _posi_ruihua( vec3 rgb, float mixParam )
  {
 	vec4 sharpen;
@@ -157,7 +195,7 @@ void main(){
 	realColor.rgb = mix( vec3(0.5,0.5,0.5), realColor.rgb, group1.r );
 	
 	// 色温
-	mediump vec3 yiq = RGBtoYIQ * realColor.rgb; //adjusting tint
+	mediump vec3 yiq = RGBtoYIQ * realColor.rgb;
 	yiq.b = clamp(yiq.b + 0.0*0.5226*0.1, -0.5226, 0.5226);
 	vec3 rgb = YIQtoRGB * yiq; 
 	vec3 processed = vec3(
@@ -167,15 +205,31 @@ void main(){
 
 	realColor.rgb = mix(rgb, processed, group2.g);
 	
-	// 亮度
-	realColor.rgb *= group1.a;
+	
+	// 分部处理
+	if ( lumin <= spot_low ){
+		realColor.rgb *= tintLow.rgb * tintLow.a;
+	}else if( lumin <= 0.5 ){
+		realColor.rgb = mix(realColor.rgb * tintLow.rgb * tintLow.a, 
+							realColor.rgb * tintMid.rgb * tintMid.a,
+							(lumin-spot_low)/(0.5-spot_low));
+	}
+	else if( lumin <= spot_mid ){
+		realColor.rgb = mix(realColor.rgb * tintMid.rgb * tintMid.a, 
+							realColor.rgb * tintHigh.rgb * tintHigh.a,
+							(0.5-lumin)/(0.5-spot_mid));
+	}else{
+		realColor.rgb *= tintHigh.rgb * tintHigh.a;
+	}
 	
 	// 暗角
 	vec2 dist = vTextureCoord - vec2(0.5,0.5);
 	float ratio = pow(length(dist) + 0.2,group2.a);
 	realColor.rgb = realColor.rgb * (1.0-ratio);
 	
-	gl_FragColor= vec4(realColor.rgb * tint.rgb,1.0);
+	
+	
+	gl_FragColor= vec4(realColor.rgb,1.0);
 }
 </script>
 <script src="imageDef.js">
@@ -277,15 +331,18 @@ void main(){
 		
 		var uniform_g1 = webgl.getUniformLocation(program, 'group1');
 		var uniform_g2 = webgl.getUniformLocation(program, 'group2');
-		var uniform_g3 = webgl.getUniformLocation(program, 'group3');
-		var uniform_tint = webgl.getUniformLocation(program, 'tint');
+		var uniform_g3 = webgl.getUniformLocation(program, 'group3');		
+		var uniform_tintLow = webgl.getUniformLocation(program, 'tintLow');
+		var uniform_tintMid = webgl.getUniformLocation(program, 'tintMid');
+		var uniform_tintHigh = webgl.getUniformLocation(program, 'tintHigh');
+		
 		var uniform_other = webgl.getUniformLocation(program, 'otherparam');
 		
 		// group1
 		var vdbd = document.getElementById('range_dbd').value;
 		var vbhd = document.getElementById('range_bhd').value;
-		var vsj = document.getElementById('range_sj').value;
-		var vld = document.getElementById('range_ld').value;
+		var vsj = 0;//document.getElementById('range_sj').value;
+		var vld = 0;//document.getElementById('range_ld').value;
 		webgl.uniform4fv( uniform_g1, [vdbd,vbhd,vsj,vld]);
 		
 		// group2
@@ -295,11 +352,24 @@ void main(){
 		var vaj = document.getElementById('range_aj').value;
 		webgl.uniform4fv( uniform_g2, [vsx,vsw,vrh,vaj]);
 		
-		// tint
-		var vR = document.getElementById('range_r').value;
-		var vG = document.getElementById('range_g').value;
-		var vB = document.getElementById('range_b').value;
-		webgl.uniform4fv( uniform_tint, [vR,vG,vB,1]);
+		// low
+		var vLowR = document.getElementById('val_r_pickerLow').value/255.0;
+		var vLowG = document.getElementById('val_g_pickerLow').value/255.0;
+		var vLowB = document.getElementById('val_b_pickerLow').value/255.0;
+		var vLowL = document.getElementById('val_l_pickerLow').value;
+		webgl.uniform4fv( uniform_tintLow, [vLowR,vLowG,vLowB,vLowL] )
+		// mid
+		var vMidR = document.getElementById('val_r_pickerMid').value/255.0;
+		var vMidG = document.getElementById('val_g_pickerMid').value/255.0;
+		var vMidB = document.getElementById('val_b_pickerMid').value/255.0;
+		var vMidL = document.getElementById('val_l_pickerMid').value;
+		webgl.uniform4fv( uniform_tintMid, [vMidR,vMidG,vMidB,vMidL] )
+		// high
+		var vHighR = document.getElementById('val_r_pickerHigh').value/255.0;
+		var vHighG = document.getElementById('val_g_pickerHigh').value/255.0;
+		var vHighB = document.getElementById('val_b_pickerHigh').value/255.0;
+		var vHighL = document.getElementById('val_l_pickerHigh').value;
+		webgl.uniform4fv( uniform_tintHigh, [vHighR,vHighG,vHighB,vHighL] )
 		
 		// other
 		var widthPixxel = 1.0/myTexture.image.width;
@@ -309,21 +379,23 @@ void main(){
 		webgl.bindTexture(webgl.TEXTURE_2D, myTexture)
 		webgl.drawElements(webgl.TRIANGLES,6,webgl.UNSIGNED_SHORT,0);
 		
-		
 		// 更新UI
 		change_value_from_range('dbd')
 		change_value_from_range('bhd')
-		change_value_from_range('sj')
+		// empty
+		// empty
+		
 		change_value_from_range('sx')
-		change_value_from_range('ld')
 		change_value_from_range('sw')
 		change_value_from_range('rh')
 		change_value_from_range('aj')
-		change_value_from_range('r')
-		change_value_from_range('g')
-		change_value_from_range('b')
 		
-		var stringShow = 	vdbd + "," + vbhd + "," + vsj + "," + vld + "," + vsx + "," + vsw + "," + vrh + "," + vaj + "," + vR + "," + vG + "," + vB + "," + "1";
+		var stringShow = 	vdbd + "," + vbhd + "," + vsj + "," + vld + "," + 
+							vsx + "," + vsw + "," + vrh + "," + vaj + "," + 
+							vLowR.toFixed(3) + "," + vLowG.toFixed(3) + "," + vLowB.toFixed(3) + "," + vLowL + "," + 
+							vMidR.toFixed(3) + "," + vMidG.toFixed(3) + "," + vMidB.toFixed(3) + "," + vMidL + "," + 
+							vHighR.toFixed(3) + "," + vHighG.toFixed(3) + "," + vHighB.toFixed(3) + "," + vHighL
+							
 		document.getElementById('textresult').value = stringShow;
 	}
 	
@@ -331,6 +403,31 @@ void main(){
 	
 	//setInterval(function(){
 	//},16);
+	
+	function onSetValueToCtrl(){
+		var allParams = document.getElementById('textresult').value
+		var arrTexts = allParams.split(",")
+		
+		// 更新UI
+		set_value_to_ui('dbd', parseFloat(arrTexts[0]))
+		set_value_to_ui('bhd', parseFloat(arrTexts[1]))
+		// empty
+		// empty
+		set_value_to_ui('sx', parseFloat(arrTexts[4]))
+		set_value_to_ui('sw', parseFloat(arrTexts[5]))
+		set_value_to_ui('rh', parseFloat(arrTexts[6]))
+		set_value_to_ui('aj', parseFloat(arrTexts[7]))
+		
+		setValueToPicker('pickerLow', arrTexts[8],arrTexts[9],arrTexts[10],arrTexts[11]);
+		setValueToPicker('pickerMid', arrTexts[12],arrTexts[13],arrTexts[14],arrTexts[15]);
+		setValueToPicker('pickerHigh', arrTexts[16],arrTexts[17],arrTexts[18],arrTexts[19]);
+		
+		Render();
+	}
+	function set_value_to_ui(str, val) {
+		document.getElementById('range_'+str).value = val
+		document.getElementById('value_'+str).innerHTML = val;
+	}
 	
 	function change_value_from_range(str) {
 	  var value = document.getElementById('range_'+str).value;
