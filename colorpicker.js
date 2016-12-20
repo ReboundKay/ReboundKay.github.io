@@ -140,7 +140,7 @@ function getMousePos(canvas, evt) {
 	var editNameB = "val_b_" + tagName;
 	var editNameL = "val_l_" + tagName;
 	document.getElementById(editNameR).value = parseInt(r*255);
-	document.getElementById(editNameG).value = parseInt(b*255);
+	document.getElementById(editNameG).value = parseInt(g*255);
 	document.getElementById(editNameB).value = parseInt(b*255);
 	document.getElementById(editNameL).value = parseFloat(a);
 	
